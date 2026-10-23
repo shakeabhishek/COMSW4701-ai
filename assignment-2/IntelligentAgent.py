@@ -3,18 +3,7 @@
 #
 # COMS 4701 - Homework 2 (Coding): 2048 adversarial search agent.
 #
-# Search : expectiminimax with alpha-beta pruning, iterative deepening on a
-#          CPU-time deadline (no fixed depth limit).
-#          Turn model (FAQ Q6/Q7):  MAX (our move) -> CHANCE (tile is 2 w.p. 0.9,
-#          4 w.p. 0.1) -> MIN (computer picks the cell) -> MAX ...
-#          Pruning happens only at MAX nodes, using the beta of the MIN node
-#          directly above, so it is exact (it never changes the chosen move).
-# Eval   : weighted sum of per-row heuristics (empty cells, merge potential,
-#          monotonicity, tile sum), computed on rows and columns.
-#
-# The board is packed into a 64-bit int (one nibble per cell holding log2 of the
-# tile) and moves/heuristics are table lookups on 16-bit rows, because the
-# skeleton Grid methods are too slow to search deeply within 0.2 seconds.
+# Search : expectiminimax with alpha-beta pruning
 
 import random
 import time
