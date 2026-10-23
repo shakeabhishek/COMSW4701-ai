@@ -1,5 +1,5 @@
 # Name: Abhishek Pillai
-# UNI:  <YOUR UNI HERE>
+# UNI:  arp2247
 #
 # COMS 4701 - Homework 2 (Coding): 2048 adversarial search agent.
 #
