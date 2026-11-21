@@ -43,10 +43,15 @@ class SignLanguage:
             keras.Input(shape=(28, 28, 1)),
             Conv2D(32, (3, 3), activation='relu'),
             MaxPooling2D((2, 2)),
+            Dropout(0.25),
             Conv2D(64, (3, 3), activation='relu'),
             MaxPooling2D((2, 2)),
+            Dropout(0.25),
+            Conv2D(128, (3, 3), activation='relu'),
+            Dropout(0.25),
             Flatten(),
             Dense(128, activation='relu'),
+            Dropout(0.5),
             Dense(25, activation='softmax'),   # labels 0-24 (9 = J is never used)
         ])
 
