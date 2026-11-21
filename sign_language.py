@@ -39,37 +39,15 @@ class SignLanguage:
         Create a CNN model and save it to self.model
         """
 
-        L = keras.layers
         model = Sequential([
-            L.Input(shape=(28, 28, 1)),
-
-            # Light augmentation (active only while training). Hand signs are not
-            # mirror-symmetric, so no flips; small shifts/zooms/rotations only.
-            L.RandomRotation(0.06),
-            L.RandomZoom(0.1),
-            L.RandomTranslation(0.1, 0.1),
-
-            L.Conv2D(32, (3, 3), padding='same', activation='relu'),
-            L.BatchNormalization(),
-            L.Conv2D(32, (3, 3), padding='same', activation='relu'),
-            L.MaxPooling2D((2, 2)),
-            L.Dropout(0.25),
-
-            L.Conv2D(64, (3, 3), padding='same', activation='relu'),
-            L.BatchNormalization(),
-            L.Conv2D(64, (3, 3), padding='same', activation='relu'),
-            L.MaxPooling2D((2, 2)),
-            L.Dropout(0.25),
-
-            L.Conv2D(128, (3, 3), padding='same', activation='relu'),
-            L.BatchNormalization(),
-            L.MaxPooling2D((2, 2)),
-            L.Dropout(0.25),
-
-            L.Flatten(),
-            L.Dense(256, activation='relu'),
-            L.Dropout(0.5),
-            L.Dense(25, activation='softmax'),   # labels 0-24 (9 = J is never used)
+            keras.Input(shape=(28, 28, 1)),
+            Conv2D(32, (3, 3), activation='relu'),
+            MaxPooling2D((2, 2)),
+            Conv2D(64, (3, 3), activation='relu'),
+            MaxPooling2D((2, 2)),
+            Flatten(),
+            Dense(128, activation='relu'),
+            Dense(25, activation='softmax'),   # labels 0-24 (9 = J is never used)
         ])
 
         model.compile('adam', loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
@@ -89,8 +67,7 @@ class SignLanguage:
         x = self._preprocess(images)
         y = to_categorical(labels, num_classes=25)
 
-        x_train, x_val, y_train, y_val = train_test_split(
-            x, y, test_size=0.1, random_state=42, stratify=labels)
+        x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.1)
 
         self.data = {
             "train": (x_train, y_train),
@@ -114,8 +91,6 @@ class SignLanguage:
             epochs=epochs,
             verbose=verbose,
             validation_data=self.data["test"],
-            callbacks=[keras.callbacks.ReduceLROnPlateau(
-                monitor='val_loss', factor=0.5, patience=3, min_lr=1e-5)],
         )
         return history
 
@@ -129,7 +104,7 @@ class SignLanguage:
 
         # Normalize the data in the same way as training data
         x = self._preprocess(data)
-        probs = self.model.predict(x, batch_size=512, verbose=0)
+        probs = self.model.predict(x, verbose=0)
         return np.argmax(probs, axis=1)
 
     @staticmethod
